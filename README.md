@@ -28,7 +28,7 @@ Aplikasi web untuk menjelajahi resep makanan berdasarkan bahan (ingredients) men
 1. Clone repository
 
 ```bash
-git clone https://github.com/account-name/cmlabs-frontend-parttime-test.git
+git https://github.com/annashrul/cmlabs-frontend-parttime-test.git
 cd cmlabs-frontend-parttime-test
 ```
 
@@ -68,3 +68,8 @@ npm start
 | List Ingredients | `www.themealdb.com/api/json/v1/1/list.php?i=list` |
 | Filter by Ingredient | `www.themealdb.com/api/json/v1/1/filter.php?i={ingredient}` |
 | Detail Meal | `www.themealdb.com/api/json/v1/1/lookup.php?i={meal-id}` |
+
+
+## URL WEB
+
+- [MealExplorer](https://meal-explorer.vercel.app/)
