@@ -4,9 +4,13 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import { getMealsByIngredient, MealSummary, IMAGE_BASE_URL } from "@/lib/api";
-import SearchInput from "@/components/SearchInput";
+import StickySearch from "@/components/StickySearch";
 import MealCard from "@/components/MealCard";
 import Breadcrumb from "@/components/Breadcrumb";
+import LoadingSpinner from "@/components/LoadingSpinner";
+import EmptyState from "@/components/EmptyState";
+import PageContainer from "@/components/PageContainer";
+import { useScrollPreserve } from "@/hooks/useScrollPreserve";
 
 export default function IngredientDetailPage() {
     const params = useParams();
@@ -15,6 +19,7 @@ export default function IngredientDetailPage() {
     const [meals, setMeals] = useState<MealSummary[]>([]);
     const [search, setSearch] = useState("");
     const [loading, setLoading] = useState(true);
+    useScrollPreserve(search);
 
     useEffect(() => {
         getMealsByIngredient(ingredientName)
@@ -27,7 +32,7 @@ export default function IngredientDetailPage() {
     );
 
     return (
-        <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
+        <PageContainer>
             <Breadcrumb
                 items={[
                     { label: "Ingredients", href: "/" },
@@ -67,22 +72,17 @@ export default function IngredientDetailPage() {
                         <span className="text-orange-500">{ingredientName}</span>
                     </h1>
 
-                    <div className="sticky top-16 z-40 -mx-4 sm:-mx-6 px-4 sm:px-6 py-3 mb-6 bg-[#f9fafb]">
-                        <SearchInput
-                            value={search}
-                            onChange={setSearch}
-                            placeholder="Search meals by name..."
-                        />
-                    </div>
+                    <StickySearch
+                        value={search}
+                        onChange={setSearch}
+                        placeholder="Search meals by name..."
+                        fullWidth
+                    />
 
                     {loading ? (
-                        <div className="flex justify-center py-20">
-                            <div className="h-10 w-10 animate-spin rounded-full border-4 border-orange-500 border-t-transparent" />
-                        </div>
+                        <LoadingSpinner />
                     ) : filtered.length === 0 ? (
-                        <p className="text-center text-gray-500 py-20">
-                            No meals found{search ? ` for "${search}"` : ""}
-                        </p>
+                        <EmptyState message={`No meals found${search ? ` for "${search}"` : ""}`} />
                     ) : (
                         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4">
                             {filtered.map((meal) => (
@@ -97,6 +97,6 @@ export default function IngredientDetailPage() {
                     )}
                 </div>
             </div>
-        </div>
+        </PageContainer>
     );
 }

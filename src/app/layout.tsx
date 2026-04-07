@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
+import HeaderSearchProvider from "@/components/HeaderSearchProvider";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -22,8 +23,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col font-sans">
-        <Header />
-        <main className="flex-1">{children}</main>
+        <HeaderSearchProvider>
+          <Header />
+          <main className="flex-1">{children}</main>
+        </HeaderSearchProvider>
         <footer className="border-t border-gray-200 bg-white py-6 text-center text-sm text-gray-500">
           MealExplorer &mdash; Powered by{" "}
           <a

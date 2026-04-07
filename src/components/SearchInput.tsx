@@ -4,12 +4,16 @@ interface SearchInputProps {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
+  onFocus?: () => void;
+  onBlur?: () => void;
 }
 
 export default function SearchInput({
   value,
   onChange,
   placeholder = "Search...",
+  onFocus,
+  onBlur,
 }: SearchInputProps) {
   return (
     <div className="relative w-full">
@@ -31,6 +35,8 @@ export default function SearchInput({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
+        onFocus={onFocus}
+        onBlur={onBlur}
         className="w-full rounded-lg border border-gray-300 bg-white py-2.5 pl-10 pr-4 text-sm text-gray-900 placeholder-gray-400 shadow-sm transition focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
       />
     </div>

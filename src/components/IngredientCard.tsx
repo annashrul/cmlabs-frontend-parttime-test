@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { IMAGE_BASE_URL } from "@/lib/api";
+import { STORAGE_KEYS } from "@/lib/constants";
 
 interface IngredientCardProps {
   name: string;
@@ -16,7 +17,7 @@ export default function IngredientCard({
   highlighted,
 }: IngredientCardProps) {
   const handleClick = () => {
-    sessionStorage.setItem("ingredients_lastClicked", name);
+    sessionStorage.setItem(STORAGE_KEYS.LAST_CLICKED, name);
   };
 
   return (
