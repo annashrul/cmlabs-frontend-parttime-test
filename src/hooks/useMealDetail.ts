@@ -4,7 +4,7 @@ import type { MealDetail } from "@/lib/types";
 
 export function useMealDetail(mealId: string) {
   const [meal, setMeal] = useState<MealDetail | null>(null);
-  const [loading, setLoading] = useState(!isCached(`meal-detail:${mealId}`));
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!isCached(`meal-detail:${mealId}`)) setLoading(true);

@@ -1,7 +1,7 @@
 import type { Ingredient, Category, Area, MealSummary, MealDetail } from "./types";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-export const IMAGE_BASE_URL = process.env.NEXT_PUBLIC_IMAGE_BASE_URL;
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
+export const IMAGE_BASE_URL = process.env.NEXT_PUBLIC_IMAGE_BASE_URL ?? "";
 
 // Re-export types for convenience
 export type { Ingredient, Category, Area, MealSummary, MealDetail };
@@ -9,11 +9,16 @@ export type { Ingredient, Category, Area, MealSummary, MealDetail };
 // ── In-memory cache (cleared on page refresh) ──────────────────────
 const cache = new Map<string, unknown>();
 
-async function cached<T>(key: string, fetcher: () => Promise<T>): Promise<T> {
+async function cached<T>(key: string, fetcher: () => Promise<T>, fallback: T): Promise<T> {
   if (cache.has(key)) return cache.get(key) as T;
-  const data = await fetcher();
-  cache.set(key, data);
-  return data;
+  try {
+    const data = await fetcher();
+    cache.set(key, data);
+    return data;
+  } catch (error) {
+    console.error(`[API] Failed to fetch ${key}:`, error);
+    return fallback;
+  }
 }
 
 export function isCached(key: string): boolean {
@@ -26,7 +31,7 @@ export function getIngredients(): Promise<Ingredient[]> {
     const res = await fetch(`${BASE_URL}/list.php?i=list`);
     const data = await res.json();
     return data.meals ?? [];
-  });
+  }, []);
 }
 
 export function getMealsByIngredient(ingredient: string): Promise<MealSummary[]> {
@@ -36,7 +41,7 @@ export function getMealsByIngredient(ingredient: string): Promise<MealSummary[]>
     );
     const data = await res.json();
     return data.meals ?? [];
-  });
+  }, []);
 }
 
 export function getCategories(): Promise<Category[]> {
@@ -44,7 +49,7 @@ export function getCategories(): Promise<Category[]> {
     const res = await fetch(`${BASE_URL}/categories.php`);
     const data = await res.json();
     return data.categories ?? [];
-  });
+  }, []);
 }
 
 export function getAreas(): Promise<Area[]> {
@@ -52,7 +57,7 @@ export function getAreas(): Promise<Area[]> {
     const res = await fetch(`${BASE_URL}/list.php?a=list`);
     const data = await res.json();
     return data.meals ?? [];
-  });
+  }, []);
 }
 
 export function getMealsByCategory(category: string): Promise<MealSummary[]> {
@@ -62,7 +67,7 @@ export function getMealsByCategory(category: string): Promise<MealSummary[]> {
     );
     const data = await res.json();
     return data.meals ?? [];
-  });
+  }, []);
 }
 
 export function getMealsByArea(area: string): Promise<MealSummary[]> {
@@ -72,7 +77,7 @@ export function getMealsByArea(area: string): Promise<MealSummary[]> {
     );
     const data = await res.json();
     return data.meals ?? [];
-  });
+  }, []);
 }
 
 export function getMealDetail(id: string): Promise<MealDetail | null> {
@@ -80,7 +85,7 @@ export function getMealDetail(id: string): Promise<MealDetail | null> {
     const res = await fetch(`${BASE_URL}/lookup.php?i=${id}`);
     const data = await res.json();
     return data.meals?.[0] ?? null;
-  });
+  }, null);
 }
 
 export function getRecipeIngredients(meal: MealDetail) {

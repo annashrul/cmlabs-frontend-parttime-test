@@ -2,7 +2,7 @@ import { Heart, ExternalLink } from "lucide-react";
 
 export default function Footer() {
   return (
-    <footer className="border-t border-gray-100 bg-white py-8">
+    <footer className="hidden md:block border-t border-gray-100 bg-white py-8">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="flex flex-col items-center gap-3">
           <div className="flex items-center gap-1.5 text-sm text-gray-500">

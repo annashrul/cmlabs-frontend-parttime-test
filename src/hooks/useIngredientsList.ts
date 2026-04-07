@@ -1,9 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { getIngredients } from "@/lib/api";
 import type { Ingredient } from "@/lib/types";
 import { PAGE_SIZE, STORAGE_KEYS } from "@/lib/constants";
-import { useSessionString, useSessionNumber } from "./useSessionStorage";
-import { useDebounce } from "./useDebounce";
+import { useSessionNumber } from "./useSessionStorage";
+import { useSearchWithParams } from "./useSearchWithParams";
 import { useInfiniteScroll } from "./useInfiniteScroll";
 import { useScrollRestore } from "./useScrollRestore";
 import { useScrollPreserve } from "./useScrollPreserve";
@@ -22,11 +22,13 @@ function getCachedIngredients(): Ingredient[] {
 export function useIngredientsList() {
   const [ingredients, setIngredients] = useState<Ingredient[]>(getCachedIngredients);
   const [loading, setLoading] = useState(ingredients.length === 0);
-  const [search, setSearch] = useSessionString(STORAGE_KEYS.SEARCH, "");
+  const { value: search, setValue: setSearch, debouncedValue: debouncedSearch } = useSearchWithParams();
   const [visibleCount, setVisibleCount] = useSessionNumber(STORAGE_KEYS.VISIBLE_COUNT, PAGE_SIZE);
-  const [activeLetter, setActiveLetter] = useState("All");
+  const [activeLetter, setActiveLetterState] = useState(() => {
+    if (typeof window === "undefined") return "All";
+    return new URLSearchParams(window.location.search).get("letter") || "All";
+  });
 
-  const debouncedSearch = useDebounce(search);
   useScrollPreserve(debouncedSearch);
 
   const { highlightedValue, isInitialLoad } = useScrollRestore({
@@ -43,8 +45,13 @@ export function useIngredientsList() {
     });
   }, []);
 
+  // Only reset pagination when user types a new search, not when clearing
+  const prevSearchRef = useRef(debouncedSearch);
   useEffect(() => {
-    if (!isInitialLoad) {
+    const prev = prevSearchRef.current;
+    prevSearchRef.current = debouncedSearch;
+    // Reset only when going from empty to non-empty (started searching)
+    if (!isInitialLoad && debouncedSearch && !prev) {
       setVisibleCount(PAGE_SIZE);
     }
   }, [debouncedSearch, isInitialLoad, setVisibleCount]);
@@ -69,15 +76,34 @@ export function useIngredientsList() {
   }, [ingredients, debouncedSearch, activeLetter]);
 
   const hasMore = visibleCount < filtered.length;
-  const { sentinelRef, observerFailed, loadCount } = useInfiniteScroll({ hasMore });
+  const { sentinelRef, observerFailed, loadCount, resetPending } = useInfiniteScroll({ hasMore, paused: loading });
 
   useEffect(() => {
     if (loadCount > 0) {
-      setVisibleCount((prev) => prev + PAGE_SIZE);
+      const timer = setTimeout(() => {
+        setVisibleCount((prev) => prev + PAGE_SIZE);
+        resetPending();
+      }, 500);
+      return () => clearTimeout(timer);
     }
-  }, [loadCount, setVisibleCount]);
+  }, [loadCount, setVisibleCount, resetPending]);
 
   const visible = filtered.slice(0, visibleCount);
+
+  const setActiveLetter = useCallback((letter: string) => {
+    setActiveLetterState(letter);
+    setVisibleCount(PAGE_SIZE);
+    window.scrollTo({ top: 0 });
+    // Update URL query param
+    const params = new URLSearchParams(window.location.search);
+    if (letter === "All") {
+      params.delete("letter");
+    } else {
+      params.set("letter", letter);
+    }
+    const qs = params.toString();
+    window.history.replaceState(null, "", qs ? `${window.location.pathname}?${qs}` : window.location.pathname);
+  }, [setVisibleCount]);
 
   const loadMore = () => setVisibleCount((prev) => prev + PAGE_SIZE);
 

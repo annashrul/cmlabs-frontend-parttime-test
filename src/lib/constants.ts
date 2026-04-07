@@ -1,5 +1,5 @@
 // Pagination
-export const PAGE_SIZE = 120;
+export const PAGE_SIZE = 36;
 
 // Session Storage Keys
 export const STORAGE_KEYS = {

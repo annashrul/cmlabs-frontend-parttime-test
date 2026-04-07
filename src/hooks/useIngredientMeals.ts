@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState, useMemo } from "react";
 import { getMealsByIngredient, getIngredients, isCached, IMAGE_BASE_URL } from "@/lib/api";
 import type { MealSummary, Ingredient } from "@/lib/types";
+import { useSearchWithParams } from "./useSearchWithParams";
 
 export { IMAGE_BASE_URL };
 
@@ -8,9 +9,11 @@ export function useIngredientMeals(initialName: string) {
   const [activeIngredient, setActiveIngredient] = useState(initialName);
   const [meals, setMeals] = useState<MealSummary[]>([]);
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
-  const [search, setSearch] = useState("");
   const [sidebarSearch, setSidebarSearch] = useState("");
-  const [loading, setLoading] = useState(!isCached(`meals-by-ingredient:${initialName}`));
+  const [loading, setLoading] = useState(true);
+  const [sidebarVisibleCount, setSidebarVisibleCount] = useState(30);
+
+  const { value: search, setValue: setSearch, debouncedValue: debouncedSearch, reset: resetSearch } = useSearchWithParams();
 
   useEffect(() => {
     getIngredients().then(setIngredients);
@@ -19,21 +22,26 @@ export function useIngredientMeals(initialName: string) {
   useEffect(() => {
     const cached = isCached(`meals-by-ingredient:${activeIngredient}`);
     if (!cached) setLoading(true);
-    setSearch("");
+    resetSearch();
     getMealsByIngredient(activeIngredient)
       .then(setMeals)
       .finally(() => setLoading(false));
-  }, [activeIngredient]);
+  }, [activeIngredient, resetSearch]);
 
   const switchIngredient = useCallback((name: string) => {
     if (name === activeIngredient) return;
     setActiveIngredient(name);
-    window.history.replaceState(null, "", `/ingredients/${encodeURIComponent(name)}`);
+    const params = new URLSearchParams(window.location.search);
+    params.delete("search");
+    const qs = params.toString();
+    window.history.replaceState(null, "", `/ingredients/${encodeURIComponent(name)}${qs ? `?${qs}` : ""}`);
+    window.scrollTo({ top: 0 });
   }, [activeIngredient]);
 
-  const filteredMeals = meals.filter((meal) =>
-    meal.strMeal.toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredMeals = useMemo(() =>
+    meals.filter((meal) =>
+      meal.strMeal.toLowerCase().includes(debouncedSearch.toLowerCase())
+    ), [meals, debouncedSearch]);
 
   const filteredIngredients = useMemo(() => {
     if (!sidebarSearch) return ingredients;
@@ -42,16 +50,32 @@ export function useIngredientMeals(initialName: string) {
     );
   }, [ingredients, sidebarSearch]);
 
+  const visibleIngredients = filteredIngredients.slice(0, sidebarVisibleCount);
+  const hasMoreIngredients = sidebarVisibleCount < filteredIngredients.length;
+  const loadMoreIngredients = useCallback(() => {
+    setSidebarVisibleCount((prev) => prev + 30);
+  }, []);
+
+  const resetSidebarSearch = useCallback(() => {
+    setSidebarSearch("");
+    setSidebarVisibleCount(30);
+  }, []);
+
   return {
     activeIngredient,
     meals,
     ingredients,
     filteredMeals,
     filteredIngredients,
+    visibleIngredients,
+    hasMoreIngredients,
+    loadMoreIngredients,
     search,
     setSearch,
+    resetSearch,
     sidebarSearch,
     setSidebarSearch,
+    resetSidebarSearch,
     loading,
     switchIngredient,
   };

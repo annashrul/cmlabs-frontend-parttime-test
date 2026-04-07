@@ -1,13 +1,15 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { getMealsByArea, getAreas, isCached } from "@/lib/api";
 import type { MealSummary, Area } from "@/lib/types";
+import { useSearchWithParams } from "./useSearchWithParams";
 
 export function useAreaMeals(initialArea: string) {
   const [activeArea, setActiveArea] = useState(initialArea);
   const [meals, setMeals] = useState<MealSummary[]>([]);
   const [areas, setAreas] = useState<Area[]>([]);
-  const [search, setSearch] = useState("");
-  const [loading, setLoading] = useState(!isCached(`meals-by-area:${initialArea}`));
+  const [loading, setLoading] = useState(true);
+
+  const { value: search, setValue: setSearch, debouncedValue: debouncedSearch, reset: resetSearch } = useSearchWithParams();
 
   useEffect(() => {
     getAreas().then(setAreas);
@@ -16,21 +18,26 @@ export function useAreaMeals(initialArea: string) {
   useEffect(() => {
     const cached = isCached(`meals-by-area:${activeArea}`);
     if (!cached) setLoading(true);
-    setSearch("");
+    resetSearch();
     getMealsByArea(activeArea)
       .then(setMeals)
       .finally(() => setLoading(false));
-  }, [activeArea]);
+  }, [activeArea, resetSearch]);
 
   const switchArea = useCallback((name: string) => {
     if (name === activeArea) return;
     setActiveArea(name);
-    window.history.replaceState(null, "", `/local-culinary/${encodeURIComponent(name)}`);
+    const params = new URLSearchParams(window.location.search);
+    params.delete("search");
+    const qs = params.toString();
+    window.history.replaceState(null, "", `/local-culinary/${encodeURIComponent(name)}${qs ? `?${qs}` : ""}`);
+    window.scrollTo({ top: 0 });
   }, [activeArea]);
 
-  const filteredMeals = meals.filter((meal) =>
-    meal.strMeal.toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredMeals = useMemo(() =>
+    meals.filter((meal) =>
+      meal.strMeal.toLowerCase().includes(debouncedSearch.toLowerCase())
+    ), [meals, debouncedSearch]);
 
   return {
     activeArea,
@@ -39,6 +46,7 @@ export function useAreaMeals(initialArea: string) {
     filteredMeals,
     search,
     setSearch,
+    resetSearch,
     loading,
     switchArea,
   };

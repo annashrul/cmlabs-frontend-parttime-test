@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useStickyObserver } from "@/hooks/useStickyObserver";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useHeaderSearch } from "@/context/HeaderSearchContext";
@@ -24,9 +24,6 @@ export default function StickySearch({
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const [lockedInNavbar, setLockedInNavbar] = useState(false);
   const prevScrollY = useRef(0);
-
-  const handleFocus = useCallback(() => {}, []);
-  const handleBlur = useCallback(() => {}, []);
 
   // Track real user scroll — detect gradual scroll to top
   useEffect(() => {
@@ -63,14 +60,12 @@ export default function StickySearch({
           value={value}
           onChange={onChange}
           placeholder={placeholder}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
         />
       );
     } else {
       setContent(null);
     }
-  }, [showInNavbar, value, onChange, placeholder, setContent, handleFocus, handleBlur]);
+  }, [showInNavbar, value, onChange, placeholder, setContent]);
 
   // Clean up on unmount
   useEffect(() => {

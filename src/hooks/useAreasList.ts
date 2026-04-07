@@ -1,15 +1,15 @@
 import { useEffect, useState, useMemo } from "react";
 import { getAreas } from "@/lib/api";
 import type { Area } from "@/lib/types";
-import { useDebounce } from "./useDebounce";
+import { useSearchWithParams } from "./useSearchWithParams";
 import { REGIONS } from "@/data/areas";
 
 export function useAreasList() {
   const [areas, setAreas] = useState<Area[]>([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
   const [activeRegion, setActiveRegion] = useState("All");
-  const debouncedSearch = useDebounce(search);
+
+  const { value: search, setValue: setSearch, debouncedValue: debouncedSearch } = useSearchWithParams();
 
   useEffect(() => {
     getAreas()

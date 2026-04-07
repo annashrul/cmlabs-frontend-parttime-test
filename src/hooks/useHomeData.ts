@@ -11,11 +11,11 @@ export function useHomeData() {
   useEffect(() => {
     Promise.all([getCategories(), getIngredients(), getAreas()]).then(
       ([cats, ings, areas]) => {
-        setCategories(cats.slice(0, 4));
+        setCategories(cats.slice(0, 8));
         setIngredientCount(ings.length);
         setAreaCount(areas.length);
         setLoading(false);
-      }
+      },
     );
   }, []);
 

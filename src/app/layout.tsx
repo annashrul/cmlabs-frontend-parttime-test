@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Poppins } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import BottomBar from "@/components/layout/BottomBar";
+import ProgressBar from "@/components/layout/ProgressBar";
+import BackToTop from "@/components/ui/BackToTop";
 import { HeaderSearchProvider } from "@/context/HeaderSearchContext";
 import { ViewModeProvider } from "@/context/ViewModeContext";
 
@@ -16,6 +20,9 @@ export const metadata: Metadata = {
   title: "MealExplorer - Discover Recipes by Ingredients",
   description:
     "Explore meals and recipes by ingredients using TheMealDB API",
+  icons: {
+    icon: "/logo.svg",
+  },
 };
 
 export default function RootLayout({
@@ -25,7 +32,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${poppins.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col font-sans">
+      <body className="min-h-full flex flex-col font-sans pb-16 md:pb-0">
+        <Suspense>
+          <ProgressBar />
+        </Suspense>
         <ViewModeProvider>
           <HeaderSearchProvider>
             <Header />
@@ -33,6 +43,8 @@ export default function RootLayout({
           </HeaderSearchProvider>
         </ViewModeProvider>
         <Footer />
+        <BackToTop />
+        <BottomBar />
       </body>
     </html>
   );

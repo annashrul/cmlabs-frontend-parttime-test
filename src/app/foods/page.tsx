@@ -2,11 +2,13 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { usePageTitle } from "@/hooks/usePageTitle";
 import { getCategories } from "@/lib/api";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
 export default function FoodsPage() {
     const router = useRouter();
+    usePageTitle("Foods");
 
     useEffect(() => {
         getCategories().then((cats) => {

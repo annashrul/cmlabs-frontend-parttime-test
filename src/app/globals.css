@@ -1,5 +1,29 @@
 @import "tailwindcss";
 
+/* NProgress */
+#nprogress {
+  pointer-events: none;
+}
+#nprogress .bar {
+  background: linear-gradient(90deg, #f97316, #f59e0b);
+  position: fixed;
+  z-index: 9999;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+}
+#nprogress .peg {
+  display: block;
+  position: absolute;
+  right: 0;
+  width: 100px;
+  height: 100%;
+  box-shadow: 0 0 10px #f97316, 0 0 5px #f97316;
+  opacity: 1;
+  transform: rotate(3deg) translate(0px, -4px);
+}
+
 /* Global custom scrollbar */
 @layer base {
   *, *::before, *::after {
@@ -78,4 +102,29 @@ body {
 }
 .scrollbar-thin::-webkit-scrollbar {
   width: 4px;
+}
+
+/* Bottom sheet slide up animation */
+@keyframes slide-up {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+.animate-slide-up {
+  animation: slide-up 0.3s ease-out both;
+}
+
+/* Shimmer skeleton animation */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.animate-shimmer {
+  background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 50%, #e5e7eb 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+/* Safe area for bottom bar on notched devices */
+.safe-area-bottom {
+  padding-bottom: max(0.375rem, env(safe-area-inset-bottom));
 }
