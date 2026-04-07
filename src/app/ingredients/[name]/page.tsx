@@ -38,7 +38,7 @@ export default function IngredientDetailPage() {
             <div className="mt-6 flex flex-col lg:flex-row lg:gap-8">
                 {/* Left: Sticky ingredient image */}
                 <div className="mb-6 lg:mb-0 lg:w-64 lg:shrink-0">
-                    <div className="lg:sticky lg:top-24">
+                    <div className="lg:sticky lg:top-19">
                         <div className="flex flex-col items-center rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
                             <div className="relative h-40 w-40 overflow-hidden rounded-full bg-orange-50 p-3">
                                 <Image
