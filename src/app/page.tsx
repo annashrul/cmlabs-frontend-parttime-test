@@ -9,7 +9,7 @@ import { useHomeData } from "@/hooks/useHomeData";
 import { UtensilsCrossed, Leaf, Globe, ArrowRight, Sparkles } from "lucide-react";
 
 export default function HomePage() {
-    const { categories, ingredientCount, areaCount, loading } = useHomeData();
+    const { categories, categoryCount, ingredientCount, areaCount, loading } = useHomeData();
     usePageTitle("Home");
 
     if (loading) return <LoadingSpinner className="py-32" />;
@@ -61,7 +61,7 @@ export default function HomePage() {
                             <UtensilsCrossed className="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-6 md:w-6 text-orange-500" />
                         </div>
                         <span className="text-base sm:text-lg md:text-2xl lg:text-3xl font-bold text-gray-900">
-                            {categories.length > 0 ? categories.length.toString() : "..."}
+                            {categoryCount > 0 ? categoryCount.toString() : "..."}
                         </span>
                         <span className="text-[10px] sm:text-xs md:text-sm text-gray-500">Food Categories</span>
                     </Link>

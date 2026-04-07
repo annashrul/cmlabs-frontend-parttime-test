@@ -4,6 +4,7 @@ import type { Category } from "@/lib/types";
 
 export function useHomeData() {
   const [categories, setCategories] = useState<Category[]>([]);
+  const [categoryCount, setCategoryCount] = useState(0);
   const [ingredientCount, setIngredientCount] = useState(0);
   const [areaCount, setAreaCount] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -12,6 +13,7 @@ export function useHomeData() {
     Promise.all([getCategories(), getIngredients(), getAreas()]).then(
       ([cats, ings, areas]) => {
         setCategories(cats.slice(0, 8));
+        setCategoryCount(cats.length);
         setIngredientCount(ings.length);
         setAreaCount(areas.length);
         setLoading(false);
@@ -19,5 +21,5 @@ export function useHomeData() {
     );
   }, []);
 
-  return { categories, ingredientCount, areaCount, loading };
+  return { categories, categoryCount, ingredientCount, areaCount, loading };
 }
