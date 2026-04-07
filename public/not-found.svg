@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none">
+  <!-- Magnifying glass -->
+  <circle cx="52" cy="52" r="28" stroke="#D1D5DB" stroke-width="4"/>
+  <line x1="72" y1="72" x2="100" y2="100" stroke="#D1D5DB" stroke-width="6" stroke-linecap="round"/>
+  <!-- X mark inside glass -->
+  <line x1="40" y1="40" x2="64" y2="64" stroke="#F97316" stroke-width="4" stroke-linecap="round"/>
+  <line x1="64" y1="40" x2="40" y2="64" stroke="#F97316" stroke-width="4" stroke-linecap="round"/>
+</svg>
