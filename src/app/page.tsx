@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useMemo, useCallback, useRef } from "react";
 import { getIngredients, Ingredient } from "@/lib/api";
-import SearchInput from "@/components/SearchInput";
+import StickySearch from "@/components/StickySearch";
 import IngredientCard from "@/components/IngredientCard";
 
 const PAGE_SIZE = 24;
@@ -147,13 +147,11 @@ export default function IngredientsPage() {
         </p>
       </div>
 
-      <div className="mb-8 flex justify-center">
-        <SearchInput
-          value={search}
-          onChange={setSearch}
-          placeholder="Search ingredients by name..."
-        />
-      </div>
+      <StickySearch
+        value={search}
+        onChange={setSearch}
+        placeholder="Search ingredients by name..."
+      />
 
       {loading ? (
         <div className="flex justify-center py-20">
