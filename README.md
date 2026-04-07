@@ -72,4 +72,4 @@ npm start
 
 ## URL WEB
 
-- [MealExplorer](https://meal-explorer.vercel.app/)
+- https://cmlabs-frontend-parttime.vercel.app/
