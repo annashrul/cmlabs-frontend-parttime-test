@@ -3,8 +3,8 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useStickyObserver } from "@/hooks/useStickyObserver";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { useHeaderSearch } from "./Header";
-import SearchInput from "./SearchInput";
+import { useHeaderSearch } from "@/context/HeaderSearchContext";
+import SearchInput from "@/components/ui/SearchInput";
 
 interface StickySearchProps {
   value: string;

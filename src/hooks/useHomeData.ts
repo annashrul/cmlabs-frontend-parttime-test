@@ -1,0 +1,23 @@
+import { useEffect, useState } from "react";
+import { getCategories, getIngredients, getAreas } from "@/lib/api";
+import type { Category } from "@/lib/types";
+
+export function useHomeData() {
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [ingredientCount, setIngredientCount] = useState(0);
+  const [areaCount, setAreaCount] = useState(0);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    Promise.all([getCategories(), getIngredients(), getAreas()]).then(
+      ([cats, ings, areas]) => {
+        setCategories(cats.slice(0, 4));
+        setIngredientCount(ings.length);
+        setAreaCount(areas.length);
+        setLoading(false);
+      }
+    );
+  }, []);
+
+  return { categories, ingredientCount, areaCount, loading };
+}

@@ -1,12 +1,15 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Poppins } from "next/font/google";
 import "./globals.css";
-import Header from "@/components/Header";
-import HeaderSearchProvider from "@/components/HeaderSearchProvider";
+import Header from "@/components/layout/Header";
+import Footer from "@/components/layout/Footer";
+import { HeaderSearchProvider } from "@/context/HeaderSearchContext";
+import { ViewModeProvider } from "@/context/ViewModeContext";
 
-const inter = Inter({
-  variable: "--font-inter",
+const poppins = Poppins({
+  variable: "--font-poppins",
   subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700", "800"],
 });
 
 export const metadata: Metadata = {
@@ -21,23 +24,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} h-full antialiased`}>
+    <html lang="en" className={`${poppins.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col font-sans">
-        <HeaderSearchProvider>
-          <Header />
-          <main className="flex-1">{children}</main>
-        </HeaderSearchProvider>
-        <footer className="border-t border-gray-200 bg-white py-6 text-center text-sm text-gray-500">
-          MealExplorer &mdash; Powered by{" "}
-          <a
-            href="https://www.themealdb.com/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-orange-500 hover:underline"
-          >
-            TheMealDB
-          </a>
-        </footer>
+        <ViewModeProvider>
+          <HeaderSearchProvider>
+            <Header />
+            <main className="flex-1">{children}</main>
+          </HeaderSearchProvider>
+        </ViewModeProvider>
+        <Footer />
       </body>
     </html>
   );
