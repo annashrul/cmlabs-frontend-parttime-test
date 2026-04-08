@@ -6,7 +6,7 @@ import { useIngredientsList } from "@/hooks/useIngredientsList";
 import { useViewMode } from "@/context/ViewModeContext";
 import SearchInput from "@/components/ui/SearchInput";
 import IngredientCard from "@/components/cards/IngredientCard";
-import { SkeletonIngredientGrid, SkeletonIngredientList, SkeletonIngredientCard } from "@/components/ui/Skeleton";
+import { SkeletonIngredientGrid, SkeletonIngredientList, SkeletonIngredientCard, SkeletonIngredientListItem } from "@/components/ui/Skeleton";
 import { useGridColumns } from "@/hooks/useGridColumns";
 import EmptyState from "@/components/ui/EmptyState";
 import PageContainer from "@/components/layout/PageContainer";
@@ -125,6 +125,13 @@ export default function IngredientsPage() {
                                     {visible.map((item) => (
                                         <IngredientCardList key={item.idIngredient} name={item.strIngredient} description={item.strDescription} highlighted={item.strIngredient === highlightedValue} />
                                     ))}
+                                    {hasMore && !observerFailed && (
+                                        <>
+                                            {Array.from({ length: 3 }).map((_, i) => (
+                                                <SkeletonIngredientListItem key={`skel-${i}`} />
+                                            ))}
+                                        </>
+                                    )}
                                 </div>
                             )}
 

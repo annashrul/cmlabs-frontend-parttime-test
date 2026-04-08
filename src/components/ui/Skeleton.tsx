@@ -94,18 +94,24 @@ export function SkeletonIngredientGrid({ count = 12 }: { count?: number }) {
   );
 }
 
+export function SkeletonIngredientListItem() {
+  return (
+    <div className="flex items-center gap-3 sm:gap-4 rounded-xl sm:rounded-2xl border border-gray-100 bg-white p-2 sm:p-2.5 shadow-sm">
+      <Skeleton className="h-12 w-12 sm:h-16 sm:w-16 shrink-0 rounded-lg sm:rounded-xl" />
+      <div className="flex-1 space-y-1.5">
+        <Skeleton className="h-3.5 sm:h-4 w-1/2" />
+        <Skeleton className="h-2.5 sm:h-3 w-3/4" />
+      </div>
+      <Skeleton className="h-8 w-8 sm:h-9 sm:w-9 rounded-full shrink-0" />
+    </div>
+  );
+}
+
 export function SkeletonIngredientList({ count = 8 }: { count?: number }) {
   return (
     <div className="space-y-2">
       {Array.from({ length: count }).map((_, i) => (
-        <div key={i} className="flex items-center gap-3 sm:gap-4 rounded-xl sm:rounded-2xl border border-gray-100 bg-white p-2 sm:p-2.5 shadow-sm">
-          <Skeleton className="h-12 w-12 sm:h-16 sm:w-16 shrink-0 rounded-lg sm:rounded-xl" />
-          <div className="flex-1 space-y-1.5">
-            <Skeleton className="h-3.5 sm:h-4 w-1/2" />
-            <Skeleton className="h-2.5 sm:h-3 w-3/4" />
-          </div>
-          <Skeleton className="h-8 w-8 sm:h-9 sm:w-9 rounded-full shrink-0" />
-        </div>
+        <SkeletonIngredientListItem key={i} />
       ))}
     </div>
   );

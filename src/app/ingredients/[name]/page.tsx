@@ -31,8 +31,8 @@ export default function IngredientDetailPage() {
     usePageTitle(`Meals with ${activeIngredient}`);
 
     // Separate infinite scroll observers for sidebar and bottom sheet
-    const sidebar = useContainerScroll(hasMoreIngredients, loadMoreIngredients);
-    const sheet = useContainerScroll(hasMoreIngredients, loadMoreIngredients);
+    const sidebar = useContainerScroll(hasMoreIngredients, loadMoreIngredients, visibleIngredients.length);
+    const sheet = useContainerScroll(hasMoreIngredients, loadMoreIngredients, visibleIngredients.length);
 
     const handleIngredientSelect = (name: string) => {
         switchIngredient(name);
