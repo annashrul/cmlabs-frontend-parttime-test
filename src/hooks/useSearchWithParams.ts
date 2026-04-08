@@ -5,19 +5,24 @@ import { DEBOUNCE_DELAY } from "@/lib/constants";
  * Search state with debounce + URL query param sync.
  * - `value`: raw input value (updates instantly for responsive typing)
  * - `debouncedValue`: debounced value for filtering
- * - URL `?q=...` updated after debounce
+ * - URL `?search=...` updated after debounce
  */
 export function useSearchWithParams(paramKey = "search") {
-  // Read initial value from URL
-  const getInitial = () => {
-    if (typeof window === "undefined") return "";
-    const params = new URLSearchParams(window.location.search);
-    return params.get(paramKey) || "";
-  };
+  const [value, setValue] = useState("");
+  const [debouncedValue, setDebouncedValue] = useState("");
+  const initialized = useRef(false);
 
-  const [value, setValue] = useState(getInitial);
-  const [debouncedValue, setDebouncedValue] = useState(value);
-  const isFirstRender = useRef(true);
+  // Read initial value from URL on client mount
+  useEffect(() => {
+    if (initialized.current) return;
+    initialized.current = true;
+    const params = new URLSearchParams(window.location.search);
+    const initial = params.get(paramKey) || "";
+    if (initial) {
+      setValue(initial);
+      setDebouncedValue(initial);
+    }
+  }, [paramKey]);
 
   // Debounce
   useEffect(() => {
@@ -27,11 +32,7 @@ export function useSearchWithParams(paramKey = "search") {
 
   // Sync debounced value to URL
   useEffect(() => {
-    // Skip on first render to avoid replacing URL on mount
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      return;
-    }
+    if (!initialized.current) return;
     const params = new URLSearchParams(window.location.search);
     if (debouncedValue) {
       params.set(paramKey, debouncedValue);

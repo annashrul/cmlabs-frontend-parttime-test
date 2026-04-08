@@ -70,7 +70,7 @@ export default function MealDetailPage() {
                                 </Link>
                             )}
                             {meal.strTags && meal.strTags.split(",").map((tag) => tag.trim()).filter(Boolean).map((tag, i) => (
-                                <Link key={`${tag}-${i}`} href={`/ingredients/${encodeURIComponent(tag)}`}
+                                <Link key={`${tag}-${i}`} href={`/ingredients/${encodeURIComponent(ingredients[0]?.ingredient || tag)}?search=${encodeURIComponent(tag)}`}
                                     className="inline-flex items-center gap-1 sm:gap-1.5 rounded-full bg-gray-50 px-2.5 sm:px-3.5 py-1 sm:py-1.5 text-[10px] sm:text-xs font-medium text-gray-600 ring-1 ring-gray-200/50 hover:bg-gray-100 hover:ring-gray-300/50 hover:text-gray-800 transition-colors">
                                     <Hash className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
                                     {tag}

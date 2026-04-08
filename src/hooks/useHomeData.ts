@@ -10,15 +10,16 @@ export function useHomeData() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    Promise.all([getCategories(), getIngredients(), getAreas()]).then(
-      ([cats, ings, areas]) => {
-        setCategories(cats.slice(0, 8));
-        setCategoryCount(cats.length);
-        setIngredientCount(ings.length);
-        setAreaCount(areas.length);
-        setLoading(false);
-      },
-    );
+    // Load categories first — this is all the page needs to render
+    getCategories().then((cats) => {
+      setCategories(cats.slice(0, 8));
+      setCategoryCount(cats.length);
+      setLoading(false);
+    });
+
+    // Load counts independently in the background
+    getIngredients().then((ings) => setIngredientCount(ings.length));
+    getAreas().then((areas) => setAreaCount(areas.length));
   }, []);
 
   return { categories, categoryCount, ingredientCount, areaCount, loading };

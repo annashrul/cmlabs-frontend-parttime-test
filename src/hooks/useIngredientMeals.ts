@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, useMemo } from "react";
+import { useCallback, useEffect, useRef, useState, useMemo } from "react";
 import { getMealsByIngredient, getIngredients, isCached, IMAGE_BASE_URL } from "@/lib/api";
 import type { MealSummary, Ingredient } from "@/lib/types";
 import { useSearchWithParams } from "./useSearchWithParams";
@@ -14,6 +14,7 @@ export function useIngredientMeals(initialName: string) {
   const [sidebarVisibleCount, setSidebarVisibleCount] = useState(30);
 
   const { value: search, setValue: setSearch, debouncedValue: debouncedSearch, reset: resetSearch } = useSearchWithParams();
+  const prevIngredient = useRef(initialName);
 
   useEffect(() => {
     getIngredients().then(setIngredients);
@@ -22,7 +23,11 @@ export function useIngredientMeals(initialName: string) {
   useEffect(() => {
     const cached = isCached(`meals-by-ingredient:${activeIngredient}`);
     if (!cached) setLoading(true);
-    resetSearch();
+    // Only reset search when ingredient actually changes, not on initial mount
+    if (prevIngredient.current !== activeIngredient) {
+      prevIngredient.current = activeIngredient;
+      resetSearch();
+    }
     getMealsByIngredient(activeIngredient)
       .then(setMeals)
       .finally(() => setLoading(false));
