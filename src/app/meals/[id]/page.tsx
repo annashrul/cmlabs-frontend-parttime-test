@@ -148,6 +148,8 @@ export default function MealDetailPage() {
                             className="h-full w-full"
                             allowFullScreen
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            referrerPolicy="no-referrer-when-downgrade"
+                            loading="lazy"
                         />
                     </div>
                 </div>
